@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Import custom CSS styles
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Help from './components/Help';
+import WordDisplay from './components/WordDisplay';
+import Keyboard from './components/Keyboard';
+import HangmanIcon from './components/HangmanIcon';
 
 function App() {
   // State variables
@@ -8,6 +12,7 @@ function App() {
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [incorrectGuesses, setIncorrectGuesses] = useState(0);
   const [gameState, setGameState] = useState('playing'); // playing, won, lost
+  const [showHelp, setShowHelp] = useState(false);
 
   // Array of words for the game
   const words = ['hangman', 'javascript', 'react', 'developer', 'openai'];
@@ -94,34 +99,19 @@ function App() {
       <h1 className="mt-5 mb-4">Hangman Game</h1>
       {gameState === 'playing' && (
         <>
-          <p>Guess the word:</p>
-          <div className="word-display">
-            {word && word.split('').map((letter, index) => (
-              <span key={index} className="letter">
-                {guessedLetters.includes(letter.toLowerCase()) ? letter : '_'}
-              </span>
-            ))}
-          </div>
+          <WordDisplay word={word} guessedLetters={guessedLetters} />
           <p>Incorrect Guesses Remaining: {6 - incorrectGuesses}</p>
-          <div className="keyboard">
-            {Array.from(Array(26), (_, i) => String.fromCharCode(65 + i)).map((letter) => (
-              <button key={letter} className="btn btn-primary mr-2 mb-2" onClick={() => handleGuess(letter)}>
-                {letter}
-              </button>
-            ))}
-          </div>
+          <Keyboard handleGuess={handleGuess} />
         </>
       )}
       {gameState === 'won' && <p className="alert alert-success">Congratulations! You won!</p>}
       {gameState === 'lost' && <p className="alert alert-danger">Sorry! You lost. The word was "{word}".</p>}
-      <div className="hangman-icon mb-4">
-        <svg width="300" height="300">
-          {renderHangman()}
-        </svg>
-      </div>
+      <HangmanIcon incorrectGuesses={incorrectGuesses} />
       <div className="text-center">
         <button className="btn btn-primary" onClick={restartGame}>Restart Game</button>
+        <button className="btn btn-info" onClick={() => setShowHelp(!showHelp)}>Toggle Help</button>
       </div>
+      {showHelp && <Help />}
     </div>
   );
 }
